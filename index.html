@@ -60,7 +60,7 @@
                     super(scene, x, y, "cloudEnemy");
                     scene.add.existing(this);
                     scene.physics.add.existing(this);
-                    this.setScale(0.25);
+                    this.setScale(0.03);
                     this.setCollideWorldBounds(true);
                     this.setGravityY(0);
                 }
@@ -132,8 +132,12 @@
             function preload() {
                 this.load.image("sky", "assets/clouds.png");
                 this.load.image("platform", "assets/platform.png");
-                this.load.image("cloudEnemy", "assets/pikachu.png");
+                this.load.image("cloudEnemy", "assets/cloudEnemy.png");
+                this.load.atlas("meleeEnemy", "assets/Meleesheet.png", "assets/Meleesheet.json");
                 this.load.atlas("player", "assets/playersheet.png", "assets/playersheet.json");
+                this.load.atlas("batEnemy", "assets/Batsheet.png", "assets/Batsheet.json")
+                this.load.atlas("rangedEnemy", "assets/Rangedsheet.png", "assets/Rangedsheet.json")
+                this.load.atlas("cyclopsEnemy", "assets/Cyclopssheet.png", "assets/Cyclopssheet.json")
                 this.load.image("chest_l", "assets/chest_states/chest_locked.png");
                 this.load.image("chest_o", "assets/chest_states/chest_open.png");
                 this.load.image("chest_ul", "assets/chest_states/chest_unlocked.png");
@@ -204,8 +208,6 @@
                 space = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
                 space.on("down", jump); //calls jump function when space is pressed
 
-                // gui = this.add.text(16, 16, "Health: " + lifePoints, { fontSize: "32px", fill: "#000" });
-
                 gui = this.add.text(15, 15, "", { fontSize: "30px", fill: "#000000" });
                 gui.setScrollFactor(0,0);
                 enemy.setVelocityX(cloudSpeed);
@@ -235,10 +237,13 @@
                 gui.setText("Health: " + lifePoints + " Darts : " + dartCount);
 
                 basicEnemyMove(enemy, cloudSpeed, 101);
-
+                
                 //Player has "drag" on the x-axis meaning they slide a bit after an input
                 player.setDragX(1000);
-
+                if (player.y >= game.scale.height)
+                    {
+                        lifePoints = 0;
+                    }
                 if (player.body.touching.down && player.isJumping) {
                     player.isJumping = false;
                 }
