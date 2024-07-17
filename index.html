@@ -75,8 +75,8 @@
                 }
             }
             class RangedEnemy extends Phaser.Physics.Arcade.Sprite {
-                constructor(scene, x, y) {
-                    super(scene, x, y, "rangedEnemy");
+                constructor(scene, x, y){
+                    super (scene, x, y, "rangedEnemy");
                     scene.add.existing(this);
                     scene.physics.add.existing(this);
                     this.setScale(1);
@@ -95,8 +95,8 @@
                 }
             }
             class CyclopsEnemy extends Phaser.Physics.Arcade.Sprite {
-                constructor(scene, x, y) {
-                    super(scene, x, y, "cyclopsEnemy");
+                constructor(scene, x, y){
+                    super (scene, x, y, "cyclopsEnemy");
                     scene.add.existing(this);
                     scene.physics.add.existing(this);
                     this.setScale(1);
@@ -155,6 +155,8 @@
                 //Create the platforms and the player character set to collide with the platforms
                 createPlatforms(this);
                 //creates an enemy
+                // this.physics.add.collider(player, platforms);
+
                 enemy = new CloudEnemy(this, 450, 450);
 
                 //set up animations for player
@@ -193,12 +195,16 @@
                 this.physics.add.collider(player, platforms);
                 player.play(player.animations["idle"]);
 
+
                 //Set up user input
                 cursors = this.input.keyboard.createCursorKeys();
                 keys = this.input.keyboard.addKeys("A, D");
                 fireKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.F);
                 space = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
                 space.on("down", jump); //calls jump function when space is pressed
+
+                
+                // gui = this.add.text(16, 16, "Health: " + lifePoints, { fontSize: "32px", fill: "#000" });
 
                 gui = this.add.text(15, 15, "", { fontSize: "30px", fill: "#ff0000" });
                 enemy.setVelocityX(cloudSpeed);
@@ -222,7 +228,7 @@
 
             function update() {
                 gui.setText("Health: " + lifePoints);
-                
+
 
                 //Player has "drag" on the x-axis meaning they slide a bit after an input
                 player.setDragX(1000);
