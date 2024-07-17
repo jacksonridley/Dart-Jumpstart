@@ -3,7 +3,8 @@
         <title>Dart Jumpstart</title>
         <script src="https://cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser.js"></script>
         <style>
-            body, html {
+            body,
+            html {
                 margin: 0;
                 padding: 0;
                 height: 100%;
@@ -75,8 +76,8 @@
                 }
             }
             class RangedEnemy extends Phaser.Physics.Arcade.Sprite {
-                constructor(scene, x, y){
-                    super (scene, x, y, "rangedEnemy");
+                constructor(scene, x, y) {
+                    super(scene, x, y, "rangedEnemy");
                     scene.add.existing(this);
                     scene.physics.add.existing(this);
                     this.setScale(1);
@@ -95,8 +96,8 @@
                 }
             }
             class CyclopsEnemy extends Phaser.Physics.Arcade.Sprite {
-                constructor(scene, x, y){
-                    super (scene, x, y, "cyclopsEnemy");
+                constructor(scene, x, y) {
+                    super(scene, x, y, "cyclopsEnemy");
                     scene.add.existing(this);
                     scene.physics.add.existing(this);
                     this.setScale(1);
@@ -112,6 +113,7 @@
             let player;
             let enemy;
             let darts;
+            var dartCount = 20;
             let fireKey;
             let cloudSpeed = 100;
             let enemyTicks = 0;
@@ -132,10 +134,10 @@
                 this.load.image("platform", "assets/platform.png");
                 this.load.image("cloudEnemy", "assets/pikachu.png");
                 this.load.atlas("player", "assets/playersheet.png", "assets/playersheet.json");
-                this.load.image('chest_l', 'assets/chest_states/chest_locked.png');
-                this.load.image('chest_o', 'assets/chest_states/chest_open.png');
-                this.load.image('chest_ul', 'assets/chest_states/chest_unlocked.png');
-                this.load.image('dart', 'assets/Darts/Dart_01.png');
+                this.load.image("chest_l", "assets/chest_states/chest_locked.png");
+                this.load.image("chest_o", "assets/chest_states/chest_open.png");
+                this.load.image("chest_ul", "assets/chest_states/chest_unlocked.png");
+                this.load.image("dart", "assets/Darts/Dart_01.png");
             }
 
             function create() {
@@ -143,13 +145,13 @@
                 let background = this.add.tileSprite(0, 0, game.scale.width, game.scale.height, "sky").setOrigin(0, 0);
 
                 //create Chests
-                chest1 = this.physics.add.sprite(400, 410, 'chest_l');
+                chest1 = this.physics.add.sprite(400, 410, "chest_l");
                 chest1.setCollideWorldBounds(false);
-                chest1.body.setSize(30,30);
+                chest1.body.setSize(30, 30);
 
                 // Create darts group
                 darts = this.physics.add.group({
-                maxSize: 2,
+                    maxSize: 10
                 });
 
                 //Create the platforms and the player character set to collide with the platforms
@@ -157,7 +159,6 @@
                 //creates an enemy
 
                 enemy = new CloudEnemy(this, 500, 450);
-
 
                 //set up animations for player
                 let playerAnimations = {};
@@ -196,7 +197,6 @@
                 this.physics.add.collider(enemy, platforms);
                 player.play(player.animations["idle"]);
 
-
                 //Set up user input
                 cursors = this.input.keyboard.createCursorKeys();
                 keys = this.input.keyboard.addKeys("A, D");
@@ -204,36 +204,37 @@
                 space = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
                 space.on("down", jump); //calls jump function when space is pressed
 
-                
                 // gui = this.add.text(16, 16, "Health: " + lifePoints, { fontSize: "32px", fill: "#000" });
 
-                gui = this.add.text(15, 15, "", { fontSize: "30px", fill: "#ff0000" });
+                gui = this.add.text(15, 15, "", { fontSize: "30px", fill: "#000000" });
+                gui.setScrollFactor(0,0);
                 enemy.setVelocityX(cloudSpeed);
                 this.physics.add.overlap(player, enemy, dmgPlayer, null, this);
                 this.physics.add.collider(enemy, darts, dmgEnemy);
-                
+                this.physics.add.overlap(enemy, darts, dmgEnemy);
+
                 this.physics.add.collider(darts, platforms, dartPlatformCollision);
                 this.physics.add.collider(chest1, platforms);
                 this.physics.add.collider(chest1, darts, chestStateChange);
 
                 //camera follow
                 this.cameras.main.startFollow(player);
+                //Will not work until the camera does not start out of bounds, use later
+                //this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
             }
 
             function createPlatforms(scene) {
                 platforms = scene.physics.add.staticGroup();
 
                 //all platforms
-                platforms.create(500, 600, 'platform').setScale(.8).refreshBody();
-                platforms.create(900, 540, 'platform').setScale(.8).refreshBody();
+                platforms.create(500, 600, "platform").setScale(0.8).refreshBody();
+                platforms.create(900, 540, "platform").setScale(0.8).refreshBody();
             }
 
             function update() {
-                gui.setText("Health: " + lifePoints);
+                gui.setText("Health: " + lifePoints + " Darts : " + dartCount);
 
-                
-                
-                basicEnemyMove(enemy, cloudSpeed, 101)
+                basicEnemyMove(enemy, cloudSpeed, 101);
 
                 //Player has "drag" on the x-axis meaning they slide a bit after an input
                 player.setDragX(1000);
@@ -275,11 +276,12 @@
                     }
                 }
                 // Firing projectiles (darts)
-                if (Phaser.Input.Keyboard.JustDown(fireKey)) {
+                if (Phaser.Input.Keyboard.JustDown(fireKey) && dartCount > 0) {
                     firedart();
+                    dartCount--;
                 }
                 // Check and destroy darts that have traveled roughly 600 pixels
-                darts.children.each(function(dart) {
+                darts.children.each(function (dart) {
                     if (Math.abs(dart.x - dart.startX) > 600) {
                         destroy(dart);
                     }
@@ -288,7 +290,7 @@
 
             //change chest to unlocked state once hit by dart
             function chestStateChange(chest, dart) {
-                chest1.setTexture('chest_ul');
+                chest1.setTexture("chest_ul");
                 chest1.setVelocityX(0);
                 chest1.setVelocityY(0);
                 destroy(dart);
@@ -310,8 +312,7 @@
                 if (player.flipX) {
                     xOffset = -20;
                     dartDirection = -1; // Flip the dart sprite
-                }
-                else {
+                } else {
                     xOffset = 20;
                     dartDirection = 1; // Normal direction
                 }
@@ -320,7 +321,7 @@
 
                 if (!dart) return;
 
-                dart.setTexture('dart');
+                dart.setTexture("dart");
                 dart.setScale(1.5);
                 dart.setActive(true).setVisible(true);
                 dart.setVelocityX(400 * dartDirection); // Adjust velocity based on dartDirection
@@ -331,12 +332,12 @@
 
                 // Flip the dart sprite if necessary
                 dart.setScale(dartDirection, 1.5); // Scale the dart sprite to flip it horizontally
-            }            
+            }
 
             //activated when dart collides with platform
             function dartPlatformCollision(dart, platform) {
                 destroy(dart);
-            }   
+            }
 
             function dmgPlayer(player, source) {
                 if (!invincibility) {
