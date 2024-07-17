@@ -22,6 +22,7 @@
                 }
             };
 
+
             class Player extends Phaser.Physics.Arcade.Sprite 
             {
                 animations;
@@ -38,12 +39,52 @@
                     this.isJumping = false;
                 }
             }
-            class Enemy extends Phaser.Physics.Arcade.Sprite {
+            class CloudEnemy extends Phaser.Physics.Arcade.Sprite {
                 constructor(scene, x, y) {
-                    super(scene, x, y, "enemy");
+                    super(scene, x, y, "cloudEnemy");
                     scene.add.existing(this);
                     scene.physics.add.existing(this);
                     this.setScale(0.25);
+                    this.setCollideWorldBounds(true);
+                    this.setGravityY(0);
+                }
+            }
+            class MeleeEnemy extends Phaser.Physics.Arcade.Sprite {
+                constructor(scene, x, y){
+                    super (scene, x, y, "meleeEnemy");
+                    scene.add.existing(this);
+                    scene.physics.add.existing(this);
+                    this.setScale(1);
+                    this.setCollideWorldBounds(true);
+                    this.setGravityY(3000);
+                }
+            }
+            class RangedEnemy extends Phaser.Physics.Arcade.Sprite {
+                constructor(scene, x, y){
+                    super (scene, x, y, "rangedEnemy");
+                    scene.add.existing(this);
+                    scene.physics.add.existing(this);
+                    this.setScale(1);
+                    this.setCollideWorldBounds(true);
+                    this.setGravityY(3000);
+                }
+            }
+            class BatEnemy extends Phaser.Physics.Arcade.Sprite {
+                constructor(scene, x, y){
+                    super (scene, x, y, "batEnemy");
+                    scene.add.existing(this);
+                    scene.physics.add.existing(this);
+                    this.setScale(1);
+                    this.setCollideWorldBounds(true);
+                    this.setGravityY(0);
+                }
+            }
+            class CyclopsEnemy extends Phaser.Physics.Arcade.Sprite {
+                constructor(scene, x, y){
+                    super (scene, x, y, "cyclopsEnemy");
+                    scene.add.existing(this);
+                    scene.physics.add.existing(this);
+                    this.setScale(1);
                     this.setCollideWorldBounds(true);
                     this.setGravityY(3000);
                 }
@@ -54,12 +95,13 @@
             //Game Objects
             var platforms;
             var player;
-            var enemy;
-            var enemySpeed = 100;
+            var cloudEnemy;
+            var cloudSpeed = 100;
             var enemyTicks = 0;
             var tickAmount = 1;
             var lifePoints = 3;
             var invincibility = false;
+            var invinCount = 0;
             //Keyboard controls
             var cursors;
             var keys;
@@ -74,6 +116,7 @@
                 this.load.image("platform", "assets/platform.png");
                 this.load.image("enemy", "assets/pikachu.png");
                 this.load.atlas('player', 'assets/playersheet.png', 'assets/playersheet.json');
+
             }
 
             function create() {
@@ -83,9 +126,8 @@
                 //Create the platforms and the player character set to collide with the platforms
                 createPlatforms(this);
                 //creates an enemy
-                enemy = new Enemy(this, 900, 350);
-                //adds collision for enemy with platforms
-                this.physics.add.collider(enemy, platforms);
+
+                this.physics.add.collider(player, platforms);
 
                 //set up animations for player
                 let playerAnimations = {};
@@ -122,11 +164,13 @@
                 let basePlatform = platforms.create(game.scale.width / 2, game.scale.height - 30, "platform");
                 basePlatform.setScale(3, 1).refreshBody(); //scales the base platform in the x axis to cover the entire floor
 
-                platforms.create(250, 350, "platform"); //creates the upper left platform
-                platforms.create(950, 500, "platform"); //creates the bottom right platform
+            
             }
 
             function update() {
+                gui.setText("Health: " + lifePoints);
+                //Player will not move in the x-axis unless a movement key is being pressed
+
 
                 //Player has "drag" on the x-axis meaning they slide a bit after an input
                 player.setDragX(1000);
@@ -165,10 +209,14 @@
                         player.play(player.animations['idle'], true);
                     }
                 }
-                //Timer for enemy turns, and turns them around
-                basicEnemyMove(enemy, enemySpeed, 101);
-                //Checks if player has enough health to continue play, if not, the player is deleted
-                
+                //If player is invincible, starts a countdown to when they will become vulnerable again
+                if (invincibility) {
+                    invinCount++;
+                    if (invinCount === 75) {
+                        invincibility = !invincibility;
+                        invinCount = 0;
+                    }
+                }
             }
 
             function jump(event) {
@@ -181,12 +229,14 @@
             }
 
             function dmgPlayer(player, enemy) {
-                
-                lifePoints--;
-                if(lifePoints === 0){
+                if (!invincibility) {
+                    lifePoints--;
+                    invincibility = !invincibility;
+                }
+
+                if (lifePoints === 0) {
                     player.disableBody(true, true);
                 }
- 
             }
             function basicEnemyMove(enemy, speed, length) {
                 enemyTicks += tickAmount;
@@ -197,10 +247,7 @@
                     enemy.setVelocityX(speed);
                     tickAmount = 1;
                 }
-            
             }
-            
-           //testing comment
 
             //Reset the gui text to be empty after the guiTimer elapses
             function removeText() {
