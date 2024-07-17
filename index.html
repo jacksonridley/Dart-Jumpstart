@@ -6,7 +6,6 @@
 
     <body>
         <script>
-            
             var config = {
                 type: Phaser.AUTO,
                 width: 1200,
@@ -22,20 +21,17 @@
                 }
             };
 
-
-            class Player extends Phaser.Physics.Arcade.Sprite 
-            {
+            class Player extends Phaser.Physics.Arcade.Sprite {
                 animations;
                 isJumping;
-                constructor(scene, x, y, spritesheet, animations)
-                {
+                constructor(scene, x, y, spritesheet, animations) {
                     super(scene, x, y, spritesheet);
                     this.animations = animations;
                     scene.add.existing(this);
                     scene.physics.add.existing(this);
                     this.setScale(2);
                     this.setCollideWorldBounds(true);
-                    this.setGravityY(1000); 
+                    this.setGravityY(1000);
                     this.isJumping = false;
                 }
             }
@@ -50,8 +46,8 @@
                 }
             }
             class MeleeEnemy extends Phaser.Physics.Arcade.Sprite {
-                constructor(scene, x, y){
-                    super (scene, x, y, "meleeEnemy");
+                constructor(scene, x, y) {
+                    super(scene, x, y, "meleeEnemy");
                     scene.add.existing(this);
                     scene.physics.add.existing(this);
                     this.setScale(1);
@@ -60,8 +56,8 @@
                 }
             }
             class RangedEnemy extends Phaser.Physics.Arcade.Sprite {
-                constructor(scene, x, y){
-                    super (scene, x, y, "rangedEnemy");
+                constructor(scene, x, y) {
+                    super(scene, x, y, "rangedEnemy");
                     scene.add.existing(this);
                     scene.physics.add.existing(this);
                     this.setScale(1);
@@ -70,8 +66,8 @@
                 }
             }
             class BatEnemy extends Phaser.Physics.Arcade.Sprite {
-                constructor(scene, x, y){
-                    super (scene, x, y, "batEnemy");
+                constructor(scene, x, y) {
+                    super(scene, x, y, "batEnemy");
                     scene.add.existing(this);
                     scene.physics.add.existing(this);
                     this.setScale(1);
@@ -80,8 +76,8 @@
                 }
             }
             class CyclopsEnemy extends Phaser.Physics.Arcade.Sprite {
-                constructor(scene, x, y){
-                    super (scene, x, y, "cyclopsEnemy");
+                constructor(scene, x, y) {
+                    super(scene, x, y, "cyclopsEnemy");
                     scene.add.existing(this);
                     scene.physics.add.existing(this);
                     this.setScale(1);
@@ -95,7 +91,7 @@
             //Game Objects
             var platforms;
             var player;
-            var cloudEnemy;
+            var enemy;
             var cloudSpeed = 100;
             var enemyTicks = 0;
             var tickAmount = 1;
@@ -110,13 +106,11 @@
             var gui;
             var guiTimer;
 
-
             function preload() {
                 this.load.image("sky", "assets/clouds.png");
                 this.load.image("platform", "assets/platform.png");
                 this.load.image("enemy", "assets/pikachu.png");
-                this.load.atlas('player', 'assets/playersheet.png', 'assets/playersheet.json');
-
+                this.load.atlas("player", "assets/playersheet.png", "assets/playersheet.json");
             }
 
             function create() {
@@ -126,24 +120,43 @@
                 //Create the platforms and the player character set to collide with the platforms
                 createPlatforms(this);
                 //creates an enemy
-
-                this.physics.add.collider(player, platforms);
+                enemy = new CloudEnemy(this, 450, 450);
 
                 //set up animations for player
                 let playerAnimations = {};
-                var idle = this.anims.create({key: 'sprite_idle', frames: this.anims.generateFrameNames('player', {prefix: 'sprite_idle', end: 1, zeroPad: 1}), repeat: -1, frameRate: 2});
-                playerAnimations['idle'] = idle
-                var right = this.anims.create({key: 'sprite_right', frames: this.anims.generateFrameNames('player', {prefix: 'sprite_right', end: 1, zeroPad: 1}), repeat: -1, frameRate: 2});
-                playerAnimations['right'] = right;
-                var up = this.anims.create({key: 'sprite_jump', frames: this.anims.generateFrameNames('player', {prefix: 'sprite_jump', end: 2, zeroPad: 1}), repeat: 1, frameRate: 4});
-                playerAnimations['up'] = up;
-                var fall = this.anims.create({key: 'sprite_idle', frames: this.anims.generateFrameNames('player', {prefix: 'sprite_idle', end: 1, zeroPad: 1}), repeat: -1, frameRate: 2});
-                playerAnimations['fall'] = fall;
+                var idle = this.anims.create({
+                    key: "sprite_idle",
+                    frames: this.anims.generateFrameNames("player", { prefix: "sprite_idle", end: 1, zeroPad: 1 }),
+                    repeat: -1,
+                    frameRate: 2
+                });
+                playerAnimations["idle"] = idle;
+                var right = this.anims.create({
+                    key: "sprite_right",
+                    frames: this.anims.generateFrameNames("player", { prefix: "sprite_right", end: 1, zeroPad: 1 }),
+                    repeat: -1,
+                    frameRate: 2
+                });
+                playerAnimations["right"] = right;
+                var up = this.anims.create({
+                    key: "sprite_jump",
+                    frames: this.anims.generateFrameNames("player", { prefix: "sprite_jump", end: 2, zeroPad: 1 }),
+                    repeat: 1,
+                    frameRate: 4
+                });
+                playerAnimations["up"] = up;
+                var fall = this.anims.create({
+                    key: "sprite_idle",
+                    frames: this.anims.generateFrameNames("player", { prefix: "sprite_idle", end: 1, zeroPad: 1 }),
+                    repeat: -1,
+                    frameRate: 2
+                });
+                playerAnimations["fall"] = fall;
 
                 //initialize player object w/ collision w platforms
-                player = new Player(this, 400, 500, 'player', playerAnimations);
+                player = new Player(this, 400, 500, "player", playerAnimations);
                 this.physics.add.collider(player, platforms);
-                player.play(player.animations['idle']);
+                player.play(player.animations["idle"]);
 
                 //Set up user input
                 cursors = this.input.keyboard.createCursorKeys();
@@ -151,10 +164,9 @@
                 space = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
                 space.on("down", jump); //calls jump function when space is pressed
 
-                gui = this.add.text(150, 300, "", { fontSize: "160px", fill: "#ff0000" });
-                enemy.setVelocityX(enemySpeed);
+                gui = this.add.text(15, 15, "", { fontSize: "30px", fill: "#ff0000" });
+                enemy.setVelocityX(cloudSpeed);
                 this.physics.add.overlap(player, enemy, dmgPlayer, null, this);
-
             }
 
             function createPlatforms(scene) {
@@ -163,50 +175,41 @@
                 //basePlatform is the floor of the game
                 let basePlatform = platforms.create(game.scale.width / 2, game.scale.height - 30, "platform");
                 basePlatform.setScale(3, 1).refreshBody(); //scales the base platform in the x axis to cover the entire floor
-
-            
             }
 
             function update() {
                 gui.setText("Health: " + lifePoints);
-                //Player will not move in the x-axis unless a movement key is being pressed
-
+                
 
                 //Player has "drag" on the x-axis meaning they slide a bit after an input
                 player.setDragX(1000);
 
-                if (player.body.touching.down && player.isJumping) 
-                {
+                if (player.body.touching.down && player.isJumping) {
                     player.isJumping = false;
                 }
 
                 //if player is jumping and velocity is 0, set to fall animation
-                if (player.isJumping && player.body.velocity.y >= 0){
-                    player.play(player.animations['fall'], true);
+                if (player.isJumping && player.body.velocity.y >= 0) {
+                    player.play(player.animations["fall"], true);
                     console.log("done");
                 }
 
                 //Handle player movements
-                if (cursors.left.isDown || keys.A.isDown)
-                {
+                if (cursors.left.isDown || keys.A.isDown) {
                     player.setVelocityX(-200);
-                    player.flipX=true;
+                    player.flipX = true;
                     if (!player.isJumping) {
-                        player.play(player.animations['right'], true);
+                        player.play(player.animations["right"], true);
                     }
-                } else if (cursors.right.isDown || keys.D.isDown)
-                {
+                } else if (cursors.right.isDown || keys.D.isDown) {
                     player.setVelocityX(200);
-                    player.flipX=false;
+                    player.flipX = false;
                     if (!player.isJumping) {
-                    player.play(player.animations['right'], true);
+                        player.play(player.animations["right"], true);
                     }
-                } 
-
-                else 
-                {
+                } else {
                     if (!player.isJumping) {
-                        player.play(player.animations['idle'], true);
+                        player.play(player.animations["idle"], true);
                     }
                 }
                 //If player is invincible, starts a countdown to when they will become vulnerable again
@@ -220,10 +223,9 @@
             }
 
             function jump(event) {
-                if (player.body.touching.down)
-                {
+                if (player.body.touching.down) {
                     player.isJumping = true;
-                    player.play(player.animations['up'], true);
+                    player.play(player.animations["up"], true);
                     player.setVelocityY(-700);
                 }
             }
