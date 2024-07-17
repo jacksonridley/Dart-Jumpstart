@@ -109,7 +109,7 @@
             function preload() {
                 this.load.image("sky", "assets/clouds.png");
                 this.load.image("platform", "assets/platform.png");
-                this.load.image("enemy", "assets/pikachu.png");
+                this.load.image("cloudEnemy", "assets/pikachu.png");
                 this.load.atlas("player", "assets/playersheet.png", "assets/playersheet.json");
             }
 
@@ -120,7 +120,7 @@
                 //Create the platforms and the player character set to collide with the platforms
                 createPlatforms(this);
                 //creates an enemy
-                enemy = new CloudEnemy(this, 450, 450);
+                enemy = new CloudEnemy(this, 500, 450);
 
                 //set up animations for player
                 let playerAnimations = {};
@@ -180,7 +180,8 @@
             function update() {
                 gui.setText("Health: " + lifePoints);
                 
-
+                
+                basicEnemyMove(enemy, cloudSpeed, 101)
                 //Player has "drag" on the x-axis meaning they slide a bit after an input
                 player.setDragX(1000);
 
