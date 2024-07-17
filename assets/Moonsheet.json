@@ -1,0 +1,90 @@
+{
+  "frames": [
+    {
+      "filename": "boss/MoonBoss_01.png",
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 751,
+        "h": 880
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 231,
+        "y": 120,
+        "w": 751,
+        "h": 880
+      },
+      "sourceSize": {
+        "w": 1000,
+        "h": 1000
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "filename": "boss/MoonBoss_00.png",
+      "frame": {
+        "x": 0,
+        "y": 880,
+        "w": 590,
+        "h": 860
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 280,
+        "y": 60,
+        "w": 590,
+        "h": 860
+      },
+      "sourceSize": {
+        "w": 1000,
+        "h": 1000
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "filename": "boss/MoonBoss_02.png",
+      "frame": {
+        "x": 590,
+        "y": 880,
+        "w": 862,
+        "h": 781
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 84,
+        "y": 132,
+        "w": 862,
+        "h": 781
+      },
+      "sourceSize": {
+        "w": 1000,
+        "h": 1000
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    }
+  ],
+  "meta": {
+    "app": "http://free-tex-packer.com",
+    "version": "0.6.7",
+    "image": "Moonsheet.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 1452,
+      "h": 1740
+    },
+    "scale": 1
+  }
+}
