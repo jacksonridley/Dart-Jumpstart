@@ -22,16 +22,20 @@
                 }
             };
 
-            class Player extends Phaser.Physics.Arcade.Sprite {
-                totalJumps = 2;
-                currentJumps = 0;
-                constructor(scene, x, y) {
-                    super(scene, x, y, "player");
+            class Player extends Phaser.Physics.Arcade.Sprite 
+            {
+                animations;
+                isJumping;
+                constructor(scene, x, y, spritesheet, animations)
+                {
+                    super(scene, x, y, spritesheet);
+                    this.animations = animations;
                     scene.add.existing(this);
                     scene.physics.add.existing(this);
                     this.setScale(2);
                     this.setCollideWorldBounds(true);
-                    this.setGravityY(3000); //We will set gravity *per object* rather than for the scene!
+                    this.setGravityY(1000); 
+                    this.isJumping = false;
                 }
             }
             class Enemy extends Phaser.Physics.Arcade.Sprite {
@@ -64,11 +68,12 @@
             var gui;
             var guiTimer;
 
+
             function preload() {
                 this.load.image("sky", "assets/clouds.png");
                 this.load.image("platform", "assets/platform.png");
-                this.load.image("player", "assets/wabbit.png");
                 this.load.image("enemy", "assets/pikachu.png");
+                this.load.atlas('player', 'assets/playersheet.png', 'assets/playersheet.json');
             }
 
             function create() {
@@ -77,12 +82,26 @@
 
                 //Create the platforms and the player character set to collide with the platforms
                 createPlatforms(this);
-                player = new Player(this, 400, 400);
                 //creates an enemy
                 enemy = new Enemy(this, 900, 350);
-                this.physics.add.collider(player, platforms);
                 //adds collision for enemy with platforms
                 this.physics.add.collider(enemy, platforms);
+
+                //set up animations for player
+                let playerAnimations = {};
+                var idle = this.anims.create({key: 'sprite_idle', frames: this.anims.generateFrameNames('player', {prefix: 'sprite_idle', end: 1, zeroPad: 1}), repeat: -1, frameRate: 2});
+                playerAnimations['idle'] = idle
+                var right = this.anims.create({key: 'sprite_right', frames: this.anims.generateFrameNames('player', {prefix: 'sprite_right', end: 1, zeroPad: 1}), repeat: -1, frameRate: 2});
+                playerAnimations['right'] = right;
+                var up = this.anims.create({key: 'sprite_jump', frames: this.anims.generateFrameNames('player', {prefix: 'sprite_jump', end: 2, zeroPad: 1}), repeat: 1, frameRate: 4});
+                playerAnimations['up'] = up;
+                var fall = this.anims.create({key: 'sprite_idle', frames: this.anims.generateFrameNames('player', {prefix: 'sprite_idle', end: 1, zeroPad: 1}), repeat: -1, frameRate: 2});
+                playerAnimations['fall'] = fall;
+
+                //initialize player object w/ collision w platforms
+                player = new Player(this, 400, 500, 'player', playerAnimations);
+                this.physics.add.collider(player, platforms);
+                player.play(player.animations['idle']);
 
                 //Set up user input
                 cursors = this.input.keyboard.createCursorKeys();
@@ -93,6 +112,7 @@
                 gui = this.add.text(150, 300, "", { fontSize: "160px", fill: "#ff0000" });
                 enemy.setVelocityX(enemySpeed);
                 this.physics.add.overlap(player, enemy, dmgPlayer, null, this);
+
             }
 
             function createPlatforms(scene) {
@@ -107,24 +127,43 @@
             }
 
             function update() {
-                //Player will not move in the x-axis unless a movement key is being pressed
-                player.setVelocityX(0);
 
                 //Player has "drag" on the x-axis meaning they slide a bit after an input
                 player.setDragX(1000);
 
-                //This will reset the number of jumps available to the player whenever the player lands
-                if (player.body.touching.down) {
-                    player.currentJumps = 0;
+                if (player.body.touching.down && player.isJumping) 
+                {
+                    player.isJumping = false;
+                }
+
+                //if player is jumping and velocity is 0, set to fall animation
+                if (player.isJumping && player.body.velocity.y >= 0){
+                    player.play(player.animations['fall'], true);
+                    console.log("done");
                 }
 
                 //Handle player movements
-                if (cursors.left.isDown || keys.A.isDown) {
-                    player.setVelocityX(-400);
-                }
+                if (cursors.left.isDown || keys.A.isDown)
+                {
+                    player.setVelocityX(-200);
+                    player.flipX=true;
+                    if (!player.isJumping) {
+                        player.play(player.animations['right'], true);
+                    }
+                } else if (cursors.right.isDown || keys.D.isDown)
+                {
+                    player.setVelocityX(200);
+                    player.flipX=false;
+                    if (!player.isJumping) {
+                    player.play(player.animations['right'], true);
+                    }
+                } 
 
-                if (cursors.right.isDown || keys.D.isDown) {
-                    player.setVelocityX(400);
+                else 
+                {
+                    if (!player.isJumping) {
+                        player.play(player.animations['idle'], true);
+                    }
                 }
                 //Timer for enemy turns, and turns them around
                 basicEnemyMove(enemy, enemySpeed, 101);
@@ -133,16 +172,14 @@
             }
 
             function jump(event) {
-                if (player.body.touching.down) {
-                    //If the player is on the ground, the player can jump
-                    player.setVelocityY(-1100);
-                    player.currentJumps++;
-                } else if (player.currentJumps < player.totalJumps) {
-                    //If the player is not on the ground but has an available air jump, use that jump
-                    player.setVelocityY(-800);
-                    player.currentJumps++;
+                if (player.body.touching.down)
+                {
+                    player.isJumping = true;
+                    player.play(player.animations['up'], true);
+                    player.setVelocityY(-700);
                 }
             }
+
             function dmgPlayer(player, enemy) {
                 
                 lifePoints--;
