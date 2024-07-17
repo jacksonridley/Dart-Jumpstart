@@ -193,6 +193,7 @@
                 //initialize player object w/ collision w platforms
                 player = new Player(this, 400, 500, "player", playerAnimations);
                 this.physics.add.collider(player, platforms);
+                this.physics.add.collider(enemy, platforms);
                 player.play(player.animations["idle"]);
 
 
@@ -209,7 +210,8 @@
                 gui = this.add.text(15, 15, "", { fontSize: "30px", fill: "#ff0000" });
                 enemy.setVelocityX(cloudSpeed);
                 this.physics.add.overlap(player, enemy, dmgPlayer, null, this);
-
+                this.physics.add.collider(enemy, darts, dmgEnemy);
+                
                 this.physics.add.collider(darts, platforms, dartPlatformCollision);
                 this.physics.add.collider(chest1, platforms);
                 this.physics.add.collider(chest1, darts, chestStateChange);
@@ -336,7 +338,7 @@
                 destroy(dart);
             }   
 
-            function dmgPlayer(player, enemy) {
+            function dmgPlayer(player, source) {
                 if (!invincibility) {
                     lifePoints--;
                     invincibility = !invincibility;
@@ -345,6 +347,10 @@
                 if (lifePoints === 0) {
                     player.disableBody(true, true);
                 }
+            }
+            function dmgEnemy(enemy, source) {
+                destroy(source);
+                enemy.disableBody(true, true);
             }
             function basicEnemyMove(enemy, speed, length) {
                 enemyTicks += tickAmount;
