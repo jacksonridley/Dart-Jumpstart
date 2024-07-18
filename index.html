@@ -225,6 +225,7 @@
                 this.physics.add.collider(darts, platforms, dartPlatformCollision);
                 this.physics.add.collider(chest1, platforms);
                 this.physics.add.collider(chest1, darts, chestStateChange);
+                this.physics.add.overlap(player, chest1, interactable);
 
                 //camera follow
                 this.cameras.main.startFollow(player);
