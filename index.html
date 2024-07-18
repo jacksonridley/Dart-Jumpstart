@@ -25,7 +25,7 @@
             const config = {
                 type: Phaser.AUTO,
                 width: 1200,
-                height: 800,
+                height:800,
                 physics: {
                     default: "arcade",
                     arcade: {
@@ -60,7 +60,7 @@
                     super(scene, x, y, "cloudEnemy");
                     scene.add.existing(this);
                     scene.physics.add.existing(this);
-                    this.setScale(0.03);
+                    this.setScale(0.1);
                     this.setCollideWorldBounds(true);
                     this.setGravityY(0);
                 }
@@ -70,7 +70,7 @@
                     super(scene, x, y, "meleeEnemy");
                     scene.add.existing(this);
                     scene.physics.add.existing(this);
-                    this.setScale(1);
+                    this.setScale(3);
                     this.setCollideWorldBounds(true);
                     this.setGravityY(3000);
                 }
@@ -162,7 +162,7 @@
                 createPlatforms(this);
                 //creates an enemy
 
-                enemy = new CloudEnemy(this, 500, 450);
+                enemy = new MeleeEnemy(this, 500, 450);
                 enemy.setGravityY(0);
 
                 //set up animations for player
@@ -197,7 +197,7 @@
                 playerAnimations["fall"] = fall;
 
                 //initialize player object w/ collision w platforms
-                player = new Player(this, 400, 500, "player", playerAnimations);
+                player = new Player(this, 800, 300, "player", playerAnimations);
                 this.physics.add.collider(player, platforms);
                 this.physics.add.collider(enemy, platforms);
                 player.play(player.animations["idle"]);
@@ -222,8 +222,6 @@
 
                 //camera follow
                 this.cameras.main.startFollow(player);
-                //Will not work until the camera does not start out of bounds, use later
-                //this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
             }
 
             function createPlatforms(scene) {
@@ -353,6 +351,8 @@
 
                 if (lifePoints === 0) {
                     player.disableBody(true, true);
+                    this.add.text(200, 300, "GAME OVER", { fontSize: "100px", fill: "#ff0000" });
+                    
                 }
             }
             function dmgEnemy(enemy, source) {
@@ -364,11 +364,14 @@
                 if (enemyTicks === length) {
                     enemy.setVelocityX(-speed);
                     tickAmount = -1;
+                    enemy.flipX = true;
                 } else if (enemyTicks === -1) {
                     enemy.setVelocityX(speed);
                     tickAmount = 1;
+                    enemy.flipX = false;
                 }
             }
+            
 
             //Reset the gui text to be empty after the guiTimer elapses
             function removeText() {
