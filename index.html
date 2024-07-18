@@ -113,7 +113,7 @@
             let player;
             let enemy;
             let darts;
-            var dartCount = 20;
+            var dartCount = 5;
             let fireKey;
             let cloudSpeed = 100;
             let enemyTicks = 0;
@@ -121,6 +121,7 @@
             let lifePoints = 3;
             let invincibility = false;
             let invinCount = 0;
+            var won = false;
             //Keyboard controls
             let cursors;
             let keys;
@@ -290,6 +291,10 @@
                         destroy(dart);
                     }
                 });
+                if(won)
+                    {
+                        this.add.text(350, 400, "YOU WIN", { fontSize: "100px", fill: "#00ff00" });
+                    }
             }
 
             //change chest to unlocked state once hit by dart
@@ -351,7 +356,7 @@
 
                 if (lifePoints === 0) {
                     player.disableBody(true, true);
-                    this.add.text(200, 300, "GAME OVER", { fontSize: "100px", fill: "#ff0000" });
+                    this.add.text(275, 400, "GAME OVER", { fontSize: "100px", fill: "#ff0000" });
                     
                 }
             }
@@ -371,6 +376,7 @@
                     enemy.flipX = false;
                 }
             }
+            
             
 
             //Reset the gui text to be empty after the guiTimer elapses
