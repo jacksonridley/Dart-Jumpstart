@@ -113,15 +113,24 @@
             let player;
             let enemy;
             let darts;
+
             var dartCount = 5;
+
+            let chest1Locked;
+
             let fireKey;
+            let interactKey;
             let cloudSpeed = 100;
             let enemyTicks = 0;
             let tickAmount = 1;
             let lifePoints = 3;
             let invincibility = false;
             let invinCount = 0;
+
             var won = false;
+
+            let takenDarts1 = false;
+
             //Keyboard controls
             let cursors;
             let keys;
@@ -150,9 +159,11 @@
                 let background = this.add.tileSprite(0, 0, game.scale.width, game.scale.height, "sky").setOrigin(0, 0);
 
                 //create Chests
-                chest1 = this.physics.add.sprite(400, 410, "chest_l");
+                chest1 = this.physics.add.sprite(1000, 410, "chest_l");
                 chest1.setCollideWorldBounds(false);
                 chest1.body.setSize(30, 30);
+                chest1Locked = true;
+
 
                 // Create darts group
                 darts = this.physics.add.group({
@@ -208,6 +219,7 @@
                 keys = this.input.keyboard.addKeys("A, D");
                 fireKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.F);
                 space = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+                interactKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.E);
                 space.on("down", jump); //calls jump function when space is pressed
 
                 gui = this.add.text(15, 15, "", { fontSize: "30px", fill: "#000000" });
@@ -303,6 +315,7 @@
                 chest1.setVelocityX(0);
                 chest1.setVelocityY(0);
                 destroy(dart);
+                chest1Locked = false;
             }
 
             function jump(event) {
@@ -382,6 +395,19 @@
             //Reset the gui text to be empty after the guiTimer elapses
             function removeText() {
                 gui.setText("");
+            }
+            
+            function interactable(player, chest) {
+                if (!chest1Locked) {
+                    console.log("touching");
+                }
+                    if (Phaser.Input.Keyboard.JustDown(interactKey)) {
+                            chest1.setTexture('chest_o');
+                            if(!takenDarts1) {
+                                dartCount += 5;
+                                takenDarts1 = true;
+                            }
+                    }
             }
 
             //destroys object in parameter when called
