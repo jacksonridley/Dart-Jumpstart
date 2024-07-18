@@ -175,9 +175,9 @@
                 // create the layers we want in the right order
                 background = map.createLayer('background', tileset, 0, 0);
                 fences = map.createLayer('fences', tileset, 0, 0);
-                bush0=map.createLayer('bush_0', tileset, 0, 0);
+                bush0=map.createLayer('bush_0', tileset, 10, 0);
                 trees=map.createLayer('trees', tileset, 0, 0);
-                bush1=map.createLayer('bush_1', tileset, 0, 0);
+                bush1=map.createLayer('bush_1', tileset, -9.5, 0);
                 ground=map.createLayer('platforms', tileset, 0, 0);
 
                 background.setScale(3);
@@ -237,7 +237,7 @@
                 });
                 playerAnimations["fall"] = fall;
                 //initialize player object w/ collision w platforms
-                player = new Player(this, 100, 600, "player", playerAnimations);
+                player = new Player(this, 100, 2000, "player", playerAnimations);
                 this.physics.add.collider(player, ground);
                 player.play(player.animations["idle"]);
 
