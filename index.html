@@ -24,8 +24,8 @@
         <script>
             const config = {
                 type: Phaser.AUTO,
-                width: 1200,
-                height:800,
+                width: 480*3,
+                height: 320*3,
                 physics: {
                     default: "arcade",
                     arcade: {
@@ -106,7 +106,17 @@
                 }
             }
 
-            const game = new Phaser.Game(config);
+            var game = new Phaser.Game(config);
+            //tiles
+            var background;
+            var fences;
+            var bush0;
+            var trees;
+            var bush1;
+            var ground;
+            var map;
+
+            var isColliding;
 
             //Game Objects
             let platforms;
@@ -145,6 +155,9 @@
                 this.load.atlas("cloudEnemy", "assets/Cloudsheet.png", "assets/Cloudsheet.json");
                 this.load.atlas("meleeEnemy", "assets/Meleesheet.png", "assets/Meleesheet.json");
                 this.load.atlas("player", "assets/playersheet.png", "assets/playersheet.json");
+                this.load.atlas('player', 'assets/playersheet.png', 'assets/playersheet.json');
+                this.load.image('tiles', 'assets/world_tileset.png');
+                this.load.tilemapTiledJSON('map', 'assets/map.json');
                 this.load.atlas("batEnemy", "assets/Batsheet.png", "assets/Batsheet.json")
                 this.load.atlas("rangedEnemy", "assets/Rangedsheet.png", "assets/Rangedsheet.json")
                 this.load.atlas("cyclopsEnemy", "assets/Cyclopssheet.png", "assets/Cyclopssheet.json")
@@ -155,8 +168,26 @@
             }
 
             function create() {
-                //Set the background origin to be at (0, 0) or top left corner of the image rather than the center of the image asset
-                let background = this.add.tileSprite(0, 0, game.scale.width, game.scale.height, "sky").setOrigin(0, 0);
+                // create the Tilemap
+                map = this.make.tilemap({ key: 'map' });
+                // add the tileset image we are using (CHECK THIS!)
+                var tileset = map.addTilesetImage('tileset', 'tiles');
+                // create the layers we want in the right order
+                background = map.createLayer('background', tileset, 0, 0);
+                fences = map.createLayer('fences', tileset, 0, 0);
+                bush0=map.createLayer('bush_0', tileset, 0, 0);
+                trees=map.createLayer('trees', tileset, 0, 0);
+                bush1=map.createLayer('bush_1', tileset, 0, 0);
+                ground=map.createLayer('platforms', tileset, 0, 0);
+
+                background.setScale(3);
+                fences.setScale(3);
+                bush0.setScale(3);
+                trees.setScale(3);
+                bush1.setScale(3);
+                ground.setScale(3);
+
+                ground.setCollisionByProperty({collides:true});
 
                 //create Chests
                 chest1 = this.physics.add.sprite(1000, 410, "chest_l");
@@ -170,8 +201,6 @@
                     maxSize: 10
                 });
 
-                //Create the platforms and the player character set to collide with the platforms
-                createPlatforms(this);
                 //creates an enemy
 
                 enemy = new MeleeEnemy(this, 500, 450);
@@ -209,9 +238,8 @@
                 playerAnimations["fall"] = fall;
 
                 //initialize player object w/ collision w platforms
-                player = new Player(this, 800, 300, "player", playerAnimations);
-                this.physics.add.collider(player, platforms);
-                this.physics.add.collider(enemy, platforms);
+                player = new Player(this, 100, 600, "player", playerAnimations);
+                this.physics.add.collider(player, ground);
                 player.play(player.animations["idle"]);
 
                 //Set up user input
@@ -226,6 +254,7 @@
                 gui.setScrollFactor(0,0);
                 enemy.setVelocityX(cloudSpeed);
                 this.physics.add.overlap(player, enemy, dmgPlayer, null, this);
+                graphics = this.add.graphics();
                 this.physics.add.collider(enemy, darts, dmgEnemy);
                 this.physics.add.overlap(enemy, darts, dmgEnemy);
 
@@ -247,17 +276,16 @@
             }
 
             function update() {
-                gui.setText("Health: " + lifePoints + " Darts : " + dartCount);
+                isColliding = this.physics.overlap(player, ground);
+                gui.setText("Health: " + lifePoints + "\nDarts: "+ dartCount);
+                
 
                 basicEnemyMove(enemy, cloudSpeed, 101);
                 
                 //Player has "drag" on the x-axis meaning they slide a bit after an input
-                player.setDragX(1000);
-                if (player.y >= game.scale.height)
-                    {
-                        lifePoints = 0;
-                    }
-                if (player.body.touching.down && player.isJumping) {
+                player.setDragX(5000);
+
+                if (isColliding && player.isJumping) {
                     player.isJumping = false;
                 }
 
@@ -269,13 +297,13 @@
 
                 //Handle player movements
                 if (cursors.left.isDown || keys.A.isDown) {
-                    player.setVelocityX(-200);
+                    player.setVelocityX(-350);
                     player.flipX = true;
                     if (!player.isJumping) {
                         player.play(player.animations["right"], true);
                     }
                 } else if (cursors.right.isDown || keys.D.isDown) {
-                    player.setVelocityX(200);
+                    player.setVelocityX(350);
                     player.flipX = false;
                     if (!player.isJumping) {
                         player.play(player.animations["right"], true);
@@ -320,7 +348,7 @@
             }
 
             function jump(event) {
-                if (player.body.touching.down) {
+                if (isColliding) {
                     player.isJumping = true;
                     player.play(player.animations["up"], true);
                     player.setVelocityY(-700);
