@@ -49,7 +49,7 @@
                     this.animations = animations;
                     scene.add.existing(this);
                     scene.physics.add.existing(this);
-                    this.setScale(2);
+                    this.setScale(1.7);
                     this.setCollideWorldBounds(false);
                     this.setGravityY(1000);
                     this.isJumping = false;
@@ -70,8 +70,8 @@
                     super(scene, x, y, "meleeEnemy");
                     scene.add.existing(this);
                     scene.physics.add.existing(this);
-                    this.setScale(3);
-                    this.setCollideWorldBounds(true);
+                    this.setScale(5);
+                    this.setCollideWorldBounds(false);
                     this.setGravityY(3000);
                 }
             }
@@ -121,19 +121,72 @@
             //Game Objects
             let platforms;
             let player;
-            let enemy;
+            let enemy1;
+            let enemy2;
+            let enemy3;
+            let enemy4;
+            let enemy5;
+            let enemy6;
+            let enemy7;
+            let enemy8;
+            let enemy9;
+            let enemy10;
+            let enemy11;
+            let enemy12;
+            let enemy13;
+            let enemy14;
+            let enemy15;
             let darts;
+
+            var dartCount = 5;
+
             let chest1Locked;
-            var dartCount = 20;
+
+            let chest2Locked;
+
+            let chest3Locked;
+            let chest4Locked;
+            let chest5Locked;
+            let chest6Locked;
+            
             let fireKey;
             let interactKey;
             let cloudSpeed = 100;
-            let enemyTicks = 0;
+            let enemy1Ticks = 0;
+            let enemy2Ticks = 0;
+            let enemy3Ticks = 0;
+            let enemy4Ticks = 0;
+            let enemy5Ticks = 0;
+            let enemy6Ticks = 0;
+            let enemy7Ticks = 0;
+            let enemy8Ticks = 0;
+            let enemy9Ticks = 0;
+            let enemy10Ticks = 0;
+            let enemy11Ticks = 0;
+            let enemy12Ticks = 0;
+            let enemy13Ticks = 0;
+            let enemy14Ticks = 0;
+            let enemy15Ticks = 0;
             let tickAmount = 1;
             let lifePoints = 3;
             let invincibility = false;
             let invinCount = 0;
+
+            enemyCount = 15;
+
+           
+
             let takenDarts1 = false;
+
+            let takenDarts2 = false;
+
+
+            let takenItems1 = false;
+            let takenItems2 = false;
+            let takenItems3 = false;
+            let takenItems4 = false;
+            let takenItems5 = false;
+            let takenItems6 = false;
             //Keyboard controls
             let cursors;
             let keys;
@@ -143,10 +196,11 @@
             let guiTimer;
 
             function preload() {
+                //sprites
                 this.load.image("sky", "assets/clouds.png");
                 this.load.image("platform", "assets/platform.png");
                 this.load.atlas("cloudEnemy", "assets/Cloudsheet.png", "assets/Cloudsheet.json");
-                this.load.atlas("meleeEnemy", "assets/Meleesheet.png", "assets/Meleesheet.json");
+                this.load.atlas("meleeEnemy", "assets/knight.png", "assets/knight.json");
                 this.load.atlas("player", "assets/playersheet.png", "assets/playersheet.json");
                 this.load.atlas('player', 'assets/playersheet.png', 'assets/playersheet.json');
                 this.load.image('tiles', 'assets/world_tileset.png');
@@ -158,6 +212,7 @@
                 this.load.image("chest_o", "assets/chest_states/chest_open.png");
                 this.load.image("chest_ul", "assets/chest_states/chest_unlocked.png");
                 this.load.image("dart", "assets/Darts/Dart_01.png");
+
             }
 
             function create() {
@@ -183,10 +238,35 @@
                 ground.setCollisionByProperty({collides:true});
 
                 //create Chests
-                chest1 = this.physics.add.sprite(1000, 410, "chest_l");
+                chest1 = this.physics.add.sprite(1065, 2100, "chest_l");
                 chest1.setCollideWorldBounds(false);
-                chest1.body.setSize(30, 30);
+                chest1.body.setSize(20, 30);
                 chest1Locked = true;
+
+                chest2 = this.physics.add.sprite(183, 2600, "chest_l");
+                chest2.setCollideWorldBounds(false);
+                chest2.body.setSize(20,30);
+                chest2Locked = true;
+
+                chest3 = this.physics.add.sprite(1035, 1400, "chest_l");
+                chest3.setCollideWorldBounds(false);
+                chest3.body.setSize(20,30);
+                chest3Locked = true;
+
+                chest4 = this.physics.add.sprite(80, 1400, "chest_l");
+                chest4.setCollideWorldBounds(false);
+                chest4.body.setSize(20,30);
+                chest4Locked = true;
+
+                chest5 = this.physics.add.sprite(300, 300, "chest_l");
+                chest5.setCollideWorldBounds(false);
+                chest5.body.setSize(20,30);
+                chest5Locked = true;
+
+                chest6 = this.physics.add.sprite(600, 100, "chest_l");
+                chest6.setCollideWorldBounds(false);
+                chest6.body.setSize(20,30);
+                chest6Locked = true;
 
 
                 // Create darts group
@@ -195,9 +275,43 @@
                 });
 
                 //creates an enemy
-
-                enemy = new MeleeEnemy(this, 500, 450);
-                enemy.setGravityY(0);
+                enemy1 = new MeleeEnemy(this, 400, 2850);
+                enemy1.flipX = true;
+                enemy2 = new MeleeEnemy(this, 650, 2500);
+                enemy3 = new MeleeEnemy(this, 900, 2150);
+                enemy3.flipX = true;
+                enemy4 = new MeleeEnemy(this, 900, 1300);
+                enemy4.flipX = true;
+                enemy5 = new MeleeEnemy(this, 240, 1300);
+                enemy6 = new MeleeEnemy(this, 1100, 1300);
+                enemy6.flipX = true;
+                enemy7 = new MeleeEnemy(this, 500, 450);
+                enemy8 = new MeleeEnemy(this, 650, 550);
+                enemy8.flipX = true;
+                enemy9 = new MeleeEnemy(this, 800, 1900);
+                enemy10 = new MeleeEnemy(this, 500, 250);
+                enemy11 = new MeleeEnemy(this, 1100, 550);
+                enemy11.flipX = true;
+                enemy12 = new MeleeEnemy(this, 70, 100);
+                enemy13 = new MeleeEnemy(this, 650, 250);
+                enemy14 = new MeleeEnemy(this, 1175, 250);
+                enemy14.flipX = true;
+                enemy15 = new MeleeEnemy(this, 875, 400);
+                this.physics.add.collider(enemy1,ground);
+                this.physics.add.collider(enemy2,ground);
+                this.physics.add.collider(enemy3,ground);
+                this.physics.add.collider(enemy4,ground);
+                this.physics.add.collider(enemy5,ground);
+                this.physics.add.collider(enemy6,ground);
+                this.physics.add.collider(enemy7,ground);
+                this.physics.add.collider(enemy8,ground);
+                this.physics.add.collider(enemy9,ground);
+                this.physics.add.collider(enemy10,ground);
+                this.physics.add.collider(enemy11,ground);
+                this.physics.add.collider(enemy12,ground);
+                this.physics.add.collider(enemy13,ground);
+                this.physics.add.collider(enemy14,ground);
+                this.physics.add.collider(enemy15,ground);
 
                 //set up animations for player
                 let playerAnimations = {};
@@ -229,32 +343,97 @@
                     frameRate: 2
                 });
                 playerAnimations["fall"] = fall;
-
                 //initialize player object w/ collision w platforms
+<<<<<<< HEAD
                 player = new Player(this, 100, 2500, "player", playerAnimations);
+=======
+
+
+                player = new Player(this, 100, 3000, "player", playerAnimations);
+>>>>>>> ec4865739a314f4b9a3143c8498bbb70352af281
                 this.physics.add.collider(player, ground);
                 player.play(player.animations["idle"]);
 
                 //Set up user input
                 cursors = this.input.keyboard.createCursorKeys();
                 keys = this.input.keyboard.addKeys("A, D");
-                fireKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.F);
+                fireKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.K);
                 space = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
                 interactKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.E);
                 space.on("down", jump); //calls jump function when space is pressed
 
-                gui = this.add.text(15, 15, "", { fontSize: "30px", fill: "#000000" });
+                gui = this.add.text(15, 15, "", { fontSize: "60px", color: "rgb(255, 255, 255)" });
+                
+                gui.setStroke('#000000', 4);
                 gui.setScrollFactor(0,0);
-                enemy.setVelocityX(cloudSpeed);
-                this.physics.add.overlap(player, enemy, dmgPlayer, null, this);
+                this.physics.add.overlap(player, enemy1, dmgPlayer, null, this);
+                this.physics.add.overlap(player, enemy2, dmgPlayer, null, this);
+                this.physics.add.overlap(player, enemy3, dmgPlayer, null, this);
+                this.physics.add.overlap(player, enemy4, dmgPlayer, null, this);
+                this.physics.add.overlap(player, enemy5, dmgPlayer, null, this);
+                this.physics.add.overlap(player, enemy6, dmgPlayer, null, this);
+                this.physics.add.overlap(player, enemy7, dmgPlayer, null, this);
+                this.physics.add.overlap(player, enemy8, dmgPlayer, null, this);
+                this.physics.add.overlap(player, enemy9, dmgPlayer, null, this);
+                this.physics.add.overlap(player, enemy10, dmgPlayer, null, this);
+                this.physics.add.overlap(player, enemy11, dmgPlayer, null, this);
+                this.physics.add.overlap(player, enemy12, dmgPlayer, null, this);
+                this.physics.add.overlap(player, enemy13, dmgPlayer, null, this);
+                this.physics.add.overlap(player, enemy14, dmgPlayer, null, this);
+                this.physics.add.overlap(player, enemy15, dmgPlayer, null, this);
                 graphics = this.add.graphics();
-                this.physics.add.collider(enemy, darts, dmgEnemy);
-                this.physics.add.overlap(enemy, darts, dmgEnemy);
 
-                this.physics.add.collider(darts, platforms, dartPlatformCollision);
-                this.physics.add.collider(chest1, platforms);
-                this.physics.add.collider(chest1, darts, chestStateChange);
-                this.physics.add.overlap(player, chest1, interactable);
+                this.physics.add.collider(enemy1, darts, dmgEnemy);
+                this.physics.add.overlap(enemy1, darts, dmgEnemy);
+                this.physics.add.collider(enemy2, darts, dmgEnemy);
+                this.physics.add.overlap(enemy2, darts, dmgEnemy);
+                this.physics.add.collider(enemy3, darts, dmgEnemy);
+                this.physics.add.overlap(enemy3, darts, dmgEnemy);
+                this.physics.add.collider(enemy4, darts, dmgEnemy);
+                this.physics.add.overlap(enemy4, darts, dmgEnemy);
+                this.physics.add.collider(enemy5, darts, dmgEnemy);
+                this.physics.add.overlap(enemy5, darts, dmgEnemy);
+                this.physics.add.collider(enemy6, darts, dmgEnemy);
+                this.physics.add.overlap(enemy6, darts, dmgEnemy);
+                this.physics.add.collider(enemy7, darts, dmgEnemy);
+                this.physics.add.overlap(enemy7, darts, dmgEnemy);
+                this.physics.add.collider(enemy8, darts, dmgEnemy);
+                this.physics.add.overlap(enemy8, darts, dmgEnemy);
+                this.physics.add.collider(enemy9, darts, dmgEnemy);
+                this.physics.add.overlap(enemy9, darts, dmgEnemy);
+                this.physics.add.collider(enemy10, darts, dmgEnemy);
+                this.physics.add.overlap(enemy10, darts, dmgEnemy);
+                this.physics.add.collider(enemy11, darts, dmgEnemy);
+                this.physics.add.overlap(enemy11, darts, dmgEnemy);
+                this.physics.add.collider(enemy12, darts, dmgEnemy);
+                this.physics.add.overlap(enemy12, darts, dmgEnemy);
+                this.physics.add.collider(enemy13, darts, dmgEnemy);
+                this.physics.add.overlap(enemy13, darts, dmgEnemy);
+                this.physics.add.collider(enemy14, darts, dmgEnemy);
+                this.physics.add.overlap(enemy14, darts, dmgEnemy);
+                this.physics.add.collider(enemy15, darts, dmgEnemy);
+                this.physics.add.overlap(enemy15, darts, dmgEnemy);
+
+                this.physics.add.collider(darts, ground, dartPlatformCollision);
+
+                this.physics.add.collider(chest1, ground);
+                this.physics.add.collider(chest1, darts, chestStateChange1);
+                this.physics.add.overlap(player, chest1, interactable1);
+                this.physics.add.collider(chest2, ground);
+                this.physics.add.collider(chest2, darts, chestStateChange2);
+                this.physics.add.overlap(player, chest2, interactable2);
+                this.physics.add.collider(chest3, ground);
+                this.physics.add.collider(chest3, darts, chestStateChange3);
+                this.physics.add.overlap(player, chest3, interactable3);
+                this.physics.add.collider(chest4, ground);
+                this.physics.add.collider(chest4, darts, chestStateChange4);
+                this.physics.add.overlap(player, chest4, interactable4);
+                this.physics.add.collider(chest5, ground);
+                this.physics.add.collider(chest5, darts, chestStateChange5);
+                this.physics.add.overlap(player, chest5, interactable5);
+                this.physics.add.collider(chest6, ground);
+                this.physics.add.collider(chest6, darts, chestStateChange6);
+                this.physics.add.overlap(player, chest6, interactable6);
 
                 //camera follow
                 this.cameras.main.startFollow(player);
@@ -263,9 +442,6 @@
             function createPlatforms(scene) {
                 platforms = scene.physics.add.staticGroup();
 
-                //all platforms
-                platforms.create(500, 600, "platform").setScale(0.8).refreshBody();
-                platforms.create(900, 540, "platform").setScale(0.8).refreshBody();
             }
 
             function update() {
@@ -273,7 +449,7 @@
                 gui.setText("Health: " + lifePoints + "\nDarts: "+ dartCount);
                 
 
-                basicEnemyMove(enemy, cloudSpeed, 101);
+                
                 
                 //Player has "drag" on the x-axis meaning they slide a bit after an input
                 player.setDragX(5000);
@@ -325,22 +501,62 @@
                         destroy(dart);
                     }
                 });
+                if(enemyCount === 0)
+                    {
+                        gui.setText("YOU WIN");
+                        this.scene.stop;
+                    }
             }
 
             //change chest to unlocked state once hit by dart
-            function chestStateChange(chest, dart) {
+            function chestStateChange1(chest, dart) {
                 chest1.setTexture("chest_ul");
                 chest1.setVelocityX(0);
                 chest1.setVelocityY(0);
                 destroy(dart);
                 chest1Locked = false;
             }
+            function chestStateChange2(chest, dart) {
+                chest2.setTexture("chest_ul");
+                chest2.setVelocityX(0);
+                chest2.setVelocityY(0);
+                destroy(dart);
+                chest2Locked = false;
+            }
+            function chestStateChange3(chest, dart) {
+                chest3.setTexture("chest_ul");
+                chest3.setVelocityX(0);
+                chest3.setVelocityY(0);
+                destroy(dart);
+                chest3Locked = false;
+            }
+            function chestStateChange4(chest, dart) {
+                chest4.setTexture("chest_ul");
+                chest4.setVelocityX(0);
+                chest4.setVelocityY(0);
+                destroy(dart);
+                chest4Locked = false;
+            }
+            function chestStateChange5(chest, dart) {
+                chest5.setTexture("chest_ul");
+                chest5.setVelocityX(0);
+                chest5.setVelocityY(0);
+                destroy(dart);
+                chest5Locked = false;
+            }
+            function chestStateChange6(chest, dart) {
+                chest6.setTexture("chest_ul");
+                chest6.setVelocityX(0);
+                chest6.setVelocityY(0);
+                destroy(dart);
+                chest6Locked = false;
+            }
 
             function jump(event) {
                 if (isColliding) {
                     player.isJumping = true;
                     player.play(player.animations["up"], true);
-                    player.setVelocityY(-700);
+                    player.setVelocityY(-600);
                 }
             }
 
@@ -387,26 +603,17 @@
 
                 if (lifePoints === 0) {
                     player.disableBody(true, true);
-                    this.add.text(200, 300, "GAME OVER", { fontSize: "100px", fill: "#ff0000" });
                     
                 }
             }
             function dmgEnemy(enemy, source) {
                 destroy(source);
                 enemy.disableBody(true, true);
+                enemyCount--;
             }
-            function basicEnemyMove(enemy, speed, length) {
-                enemyTicks += tickAmount;
-                if (enemyTicks === length) {
-                    enemy.setVelocityX(-speed);
-                    tickAmount = -1;
-                    enemy.flipX = true;
-                } else if (enemyTicks === -1) {
-                    enemy.setVelocityX(speed);
-                    tickAmount = 1;
-                    enemy.flipX = false;
-                }
-            }
+            
+            
+            
             
 
             //Reset the gui text to be empty after the guiTimer elapses
@@ -414,17 +621,80 @@
                 gui.setText("");
             }
             
-            function interactable(player, chest) {
+            function interactable1(player, chest) {
                 if (!chest1Locked) {
                     console.log("touching");
-                }
                     if (Phaser.Input.Keyboard.JustDown(interactKey)) {
                             chest1.setTexture('chest_o');
-                            if(!takenDarts1) {
+                            if(!takenItems1) {
                                 dartCount += 5;
-                                takenDarts1 = true;
+                                takenItems1 = true;
                             }
                     }
+                }
+
+            }
+            function interactable2(player, chest) {
+                if (!chest2Locked) {
+                    console.log("touching");
+                    if (Phaser.Input.Keyboard.JustDown(interactKey)) {
+                            chest2.setTexture('chest_o');
+                            if(!takenItems2) {
+                                 lifePoints += 1;
+                                takenItems2 = true;
+                            }
+                    }
+                }
+            }
+            function interactable3(player, chest) {
+                if (!chest3Locked) {
+                    console.log("touching");
+                    if (Phaser.Input.Keyboard.JustDown(interactKey)) {
+                            chest3.setTexture('chest_o');
+                            if(!takenItems3) {
+                                dartCount += 5;
+                                takenItems3 = true;
+                            }
+                    }
+                }
+
+            }
+            function interactable4(player, chest) {
+                if (!chest4Locked) {
+                    console.log("touching");
+                    if (Phaser.Input.Keyboard.JustDown(interactKey)) {
+                            chest4.setTexture('chest_o');
+                            if(!takenItems4) {
+                                 lifePoints += 1;
+                                takenItems4 = true;
+                            }
+                    }
+                }
+            }
+            function interactable5(player, chest) {
+                if (!chest5Locked) {
+                    console.log("touching");
+                    if (Phaser.Input.Keyboard.JustDown(interactKey)) {
+                            chest5.setTexture('chest_o');
+                            if(!takenItems5) {
+                                dartCount += 5;
+                                takenItems5 = true;
+                            }
+                    }
+                }
+
+            }
+            function interactable6(player, chest) {
+                if (!chest6Locked) {
+                    console.log("touching");
+                    if (Phaser.Input.Keyboard.JustDown(interactKey)) {
+                            chest6.setTexture('chest_o');
+                            if(!takenItems6) {
+                                 lifePoints += 1;
+                                takenItems6 = true;
+                            }
+                    }
+                }
             }
 
             //destroys object in parameter when called
