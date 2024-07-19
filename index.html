@@ -138,7 +138,7 @@
             let enemy15;
             let darts;
 
-            var dartCount = 5;
+            var dartCount = 10;
 
             let chest1Locked;
 
@@ -148,7 +148,7 @@
             let chest4Locked;
             let chest5Locked;
             let chest6Locked;
-            
+
             let fireKey;
             let interactKey;
             let cloudSpeed = 100;
@@ -174,7 +174,7 @@
 
             enemyCount = 15;
 
-           
+
 
             let takenDarts1 = false;
 
@@ -344,13 +344,10 @@
                 });
                 playerAnimations["fall"] = fall;
                 //initialize player object w/ collision w platforms
-<<<<<<< HEAD
-                player = new Player(this, 100, 2500, "player", playerAnimations);
-=======
+
 
 
                 player = new Player(this, 100, 3000, "player", playerAnimations);
->>>>>>> ec4865739a314f4b9a3143c8498bbb70352af281
                 this.physics.add.collider(player, ground);
                 player.play(player.animations["idle"]);
 
@@ -363,7 +360,7 @@
                 space.on("down", jump); //calls jump function when space is pressed
 
                 gui = this.add.text(15, 15, "", { fontSize: "60px", color: "rgb(255, 255, 255)" });
-                
+
                 gui.setStroke('#000000', 4);
                 gui.setScrollFactor(0,0);
                 this.physics.add.overlap(player, enemy1, dmgPlayer, null, this);
@@ -446,11 +443,21 @@
 
             function update() {
                 isColliding = this.physics.overlap(player, ground);
-                gui.setText("Health: " + lifePoints + "\nDarts: "+ dartCount);
-                
+                if(lifePoints > 0 && enemyCount >0)
+                    {
+                    gui.setText("Health: " + lifePoints + "\nDarts: "+ dartCount);
+                    }
+                else if(lifePoints === 0)
+                    {
+                        gui.setText("GAME OVER");
+                    }
+                else
+                {
+                    gui.setText("YOU WIN");
+                }
 
-                
-                
+
+
                 //Player has "drag" on the x-axis meaning they slide a bit after an input
                 player.setDragX(5000);
 
@@ -494,6 +501,7 @@
                 if (Phaser.Input.Keyboard.JustDown(fireKey) && dartCount > 0) {
                     firedart();
                     dartCount--;
+                    
                 }
                 // Check and destroy darts that have traveled roughly 600 pixels
                 darts.children.each(function (dart) {
@@ -603,7 +611,7 @@
 
                 if (lifePoints === 0) {
                     player.disableBody(true, true);
-                    
+                    gui.setText("GAME OVER");
                 }
             }
             function dmgEnemy(enemy, source) {
@@ -611,16 +619,16 @@
                 enemy.disableBody(true, true);
                 enemyCount--;
             }
-            
-            
-            
-            
+
+
+
+
 
             //Reset the gui text to be empty after the guiTimer elapses
             function removeText() {
                 gui.setText("");
             }
-            
+
             function interactable1(player, chest) {
                 if (!chest1Locked) {
                     console.log("touching");
