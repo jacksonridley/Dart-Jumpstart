@@ -26,6 +26,7 @@
                 type: Phaser.AUTO,
                 width: 480*3,
                 height: 320*3,
+                pixelArt:true,
                 physics: {
                     default: "arcade",
                     arcade: {
@@ -39,6 +40,7 @@
                     create: create,
                     update: update
                 }
+                
             };
 
             class Player extends Phaser.Physics.Arcade.Sprite {
@@ -443,13 +445,17 @@
 
             function update() {
                 isColliding = this.physics.overlap(player, ground);
-                if(lifePoints > 0 && enemyCount >0)
+                if(lifePoints > 0 && enemyCount >0 && dartCount > 0)
                     {
                     gui.setText("Health: " + lifePoints + "\nDarts: "+ dartCount);
                     }
                 else if(lifePoints === 0)
                     {
                         gui.setText("GAME OVER");
+                    }
+                else if(dartCount === 0)
+                    {
+                        gui.setText("Health: " + lifePoints + "\nIf you have no way to get more darts,\nyou lose. ")
                     }
                 else
                 {
