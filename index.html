@@ -169,6 +169,9 @@
                 this.load.image("chest_o", "assets/chest_states/chest_open.png");
                 this.load.image("chest_ul", "assets/chest_states/chest_unlocked.png");
                 this.load.image("dart", "assets/Darts/Dart_01.png");
+                
+                //sounds
+                //this.load.audio("jump", ["assets/sounds/jump.mp3"]);
 
             }
 
@@ -193,6 +196,9 @@
                 ground.setScale(3);
 
                 ground.setCollisionByProperty({collides:true});
+                
+                //sounds var creation
+                //let jump = this.sound.add("jump", {loop: false});
 
                 //create Chests
                 chest1 = this.physics.add.sprite(1065, 2100, "chest_l");
@@ -426,6 +432,7 @@
                 if (isColliding) {
                     player.isJumping = true;
                     player.play(player.animations["up"], true);
+                    //jump.play();
                     player.setVelocityY(-600);
                 }
             }
