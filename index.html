@@ -231,7 +231,7 @@
                 playerAnimations["fall"] = fall;
 
                 //initialize player object w/ collision w platforms
-                player = new Player(this, 100, 2000, "player", playerAnimations);
+                player = new Player(this, 100, 2500, "player", playerAnimations);
                 this.physics.add.collider(player, ground);
                 player.play(player.animations["idle"]);
 
